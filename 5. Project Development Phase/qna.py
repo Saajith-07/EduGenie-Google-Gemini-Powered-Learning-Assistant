@@ -12,7 +12,17 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+def answer_question_with_gemini(question: str) -> str:
+    """Core educational QnA logic using Gemini with fallback."""
+    try:
+        response = get_chat_response(question)
+        return response.explanation
+    except Exception as e:
+        logger.error(f"Error in answer_question_with_gemini: {str(e)}")
+        return get_mock_chat_response(question).explanation
+
 @router.post("/ask", response_model=ChatResponse)
+
 async def ask_question(request: ChatRequest):
     """Endpoint to answer educational questions with detailed responses."""
     try:
